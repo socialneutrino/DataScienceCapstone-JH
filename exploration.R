@@ -44,4 +44,7 @@ sprintf("%s/%s", s[a3ws2], sapply(a3ws2$features, `[[`, "POS"))
 tokenize <- function(){
   
 }
+
+
+
   
