@@ -40,11 +40,6 @@ a3ws2 <- annotations_in_spans(subset(a3, type == "word"),
 
 sprintf("%s/%s", s[a3ws2], sapply(a3ws2$features, `[[`, "POS"))
 
+library(tm)
+blog_corpus <- VCorpus(VectorSource(blog_sample))
 
-tokenize <- function(){
-  
-}
-
-
-
-  
