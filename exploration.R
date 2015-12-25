@@ -1,3 +1,66 @@
+#Create unigram freq table
+total_sample <- c(blog_sample, twitter_sample, news_sample)
+unigrams <- makeTokens(total_sample)
+
+#Create bigram freq table
+a2 <- bigrams(total_sample)
+a2 <- dfm(a2)
+a2 <- colSums(sort(a2))
+bigrams_freq <- a2[grepl("[A-Za-z]+_[A-Za-z]+", names(a2))]
+
+#Create trigram freq table
+a3 <- trigrams(total_sample)
+a3 <- dfm(a3)
+a3 <- colSums(sort(a3))
+trigrams_freq <- a3[grepl("[A-Za-z]+_[A-Za-z]+_[A-Za-z]+", names(a3))]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 library(openNLP)
 require("NLP")
 
