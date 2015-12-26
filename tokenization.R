@@ -3,7 +3,12 @@ makeTokens <- function(s) {
   s <- to.plain(s)
   s <- unlist(strsplit(tolower(s), "[^A-Za-z]"))
   s <- sort(table(s), decreasing = T)
-  s <- s[-grep("^$", names(s))]
+  if (length(grep("^$", names(test))) == 0) {
+    s
+  } else {
+    s <- s[-grep("^$", names(s))]
+    s
+  }
 }
 
 #Function to remove "â€*"-like tokens and replace them with punctuation
