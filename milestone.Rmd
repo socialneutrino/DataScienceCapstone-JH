@@ -1,0 +1,104 @@
+---
+title: "John Hopkins Data Science Capstone Milestone"
+author: "Alex Spiers"
+date: "25 December 2015"
+output: html_document
+---
+
+##Overview
+
+##Summary of files
+
+###*en_US.blogs.txt*
+
+* __Size__ - roughly 205MB
+* __Number of Lines__ - 899288
+* __Description__ - Text has been collected  by a web crawler from personal blogs
+* __Summary statistics__ - Headline statistics are below:
+```{r, echo=FALSE, warning=FALSE, cache=TRUE}
+con_blog <- file("Coursera-SwiftKey/final/en_US/en_US.blogs.txt", "r")
+blogs <- readLines(con_blog)
+close(con_blog)
+blogs_wordcount <- sapply(gregexpr("\\W+", blogs), length) + 1
+summary(blogs_wordcount)
+```
+
+####*Fig-1* - Distribution of Word Count in *en_US.blogs.txt*
+```{r, echo=FALSE}
+hist(blogs_wordcount, breaks = 1000, xlim=c(0,400), col=c("yellow","orange"), main = "en_US.blogs.txt")
+```
+
+
+###*en_US.news.txt*
+
+* __Size__ - roughly 201MB
+* __Number of Lines__ - 1010242
+* __Description__ - Text has been collected  by a web crawler from online newspapers
+* __Summary statistics__ - Headline statistics are below:
+```{r, echo=FALSE, warning=FALSE, cache=TRUE}
+con_news <- file("Coursera-SwiftKey/final/en_US/en_US.news.txt", "r")
+news <- readLines(con_news)
+close(con_news)
+news_wordcount <- sapply(gregexpr("\\W+", news), length) + 1
+summary(news_wordcount)
+```
+####*Fig-2* - Distribution of Word Count in *en_US.news.txt*
+```{r, echo=FALSE, warning=FALSE, cache=TRUE}
+hist(news_wordcount, breaks = 400, xlim=c(0,400), col=c("yellow","orange"), main = "en_US.news.txt")
+```
+
+###*en_US.twitter.txt*
+
+* __Size__ - roughly 163MB
+* __Number of Lines__ - 2360148
+* __Description__ - Text has been collected  by a web crawler from the website *twitter.com*
+* __Summary statistics__ - Headline statistics are below:
+```{r, echo=FALSE, warning=FALSE, cache=TRUE}
+con_twitter <- file("Coursera-SwiftKey/final/en_US/en_US.twitter.txt", "r")
+twitter <- readLines(con_twitter)
+close(con_twitter)
+twitter_wordcount <- sapply(gregexpr("\\W+", news), length) + 1
+summary(twitter_wordcount)
+```
+####*Fig-3* - Distribution of Word Count in *en_US.twitter.txt*
+```{r, echo=FALSE, warning=FALSE, cache=TRUE}
+hist(twitter_wordcount, breaks = 1000, xlim=c(0,200), col=c("yellow","orange"), main = NULL)
+```
+
+##Examining word frequencies and coverage
+
+
+
+```{r cache=TRUE, echo=FALSE, eval=TRUE, warning = FALSE}
+library(ggplot2)
+library(quanteda)
+library(dplyr)
+con_blog_sample <- file("blogs_sample.txt", "r")
+con_news_sample <- file("news_sample.txt", "r")
+con_twitter_sample <- file("twitter_sample.txt", "r")
+blogs_sample <- readLines(con_blog_sample) 
+close(con_blog_sample)
+news_sample <- readLines(con_news_sample) 
+close(con_news_sample)
+twitter_sample <- readLines(con_twitter_sample) 
+close(con_twitter_sample)
+source("tokenization.R")
+total_sample <- c(blogs_sample, twitter_sample, news_sample)
+unigrams <- makeTokens(total_sample)
+bigrams_freq  <- bigrams(total_sample)
+trigrams_freq <- trigrams(total_sample)
+
+gg <- ggplot(unigrams_freq, aes(x=word_number, y=coverage))
+gg <- gg + geom_line(size=0.75)
+gg <- gg + scale_x_continuous(limits=c(1, nrow(unigrams_freq)))
+gg <- gg + theme_bw()
+gg
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

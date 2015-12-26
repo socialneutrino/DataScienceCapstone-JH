@@ -2,6 +2,10 @@ library(ggplot2)
 library(quanteda)
 library(dplyr)
 
+#quick and dirty word count
+sapply(gregexpr("\\W+", head(twitter_sample)), length) + 1
+
+
 source("tokenization.R")
 
 #Create unigram freq table for sample of ALL THREE corpora samples
