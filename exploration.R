@@ -63,7 +63,7 @@ unigrams_freq <- unigrams_freq %>%
 freq_df <- function(table) {
   a <- as.data.frame(table) %>% 
     select(freq = 1) %>% 
-    mutate(table = names(table))
+    mutate(word = names(table))
   
   a$word_number <- 1:nrow(a)
   

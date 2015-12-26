@@ -3,7 +3,7 @@ makeTokens <- function(s) {
   s <- to.plain(s)
   s <- unlist(strsplit(tolower(s), "[^A-Za-z]"))
   s <- sort(table(s), decreasing = T)
-  if (length(grep("^$", names(test))) == 0) {
+  if (length(grep("^$", names(s))) == 0) {
     s
   } else {
     s <- s[-grep("^$", names(s))]
@@ -52,3 +52,4 @@ trigrams <- function (s){
   s <- colSums(sort(s))
   s[grepl("[A-Za-z]+_[A-Za-z]+_[A-Za-z]+", names(s))]
 }
+
