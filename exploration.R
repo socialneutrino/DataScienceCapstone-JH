@@ -19,6 +19,10 @@ bigrams_freq  <- bigrams(total_sample)
 trigrams_freq <- trigrams(total_sample)
 
 
+#Create quadgram freq table
+quadgrams_freq <- quadgrams(total_sample)
+
+
 
 #ngrams for BLOGS ONLY
 #unigrams

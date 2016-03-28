@@ -53,3 +53,14 @@ trigrams <- function (s){
   s[grepl("[A-Za-z]+_[A-Za-z]+_[A-Za-z]+", names(s))]
 }
 
+
+quadgrams <- function (s){
+  s <- tolower(s)
+  old2 <- c('â€œ', 'â€', 'â€™', 'â€˜', 'â€”', 'â€“', 'â€¢', 'â€¦')
+  new2 <- c('“', '”', '’', '‘', '–', '—', '-', '…')
+  for(i in seq_along(old2)) s <- gsub(old2[i], new2[i], s, fixed = TRUE)
+  s <- unlist(tokenize(s, removePunct = TRUE, ngrams = 4))
+  s <- dfm(s)
+  s <- colSums(sort(s))
+  s[grepl("[A-Za-z]+_[A-Za-z]+_[A-Za-z]+", names(s))]
+}
