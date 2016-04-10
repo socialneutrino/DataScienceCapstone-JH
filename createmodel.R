@@ -1,36 +1,27 @@
-unitest <- sampleNgm$unigrams[1:50000]
+library(quanteda)
+total_sample <- c(blogs_sample, twitter_sample, news_sample)
+sampleNgm <- createNgrams(total_sample)
+
+unitest <- sampleNgm$unigrams[1:25000]
 unigramdf <- data.frame(unigrams = names(unitest), freq = as.numeric(unitest))
 
-bitest <- sampleNgm$bigrams[1:50000]
+bitest <- sampleNgm$bigrams[1:25000]
 bigramdf <- data.frame(bigrams = names(bitest), freq = as.numeric(bitest))
 
 #bigramdf <- within(bigramdf, bigrams<-data.frame(do.call('rbind', strsplit(as.character(bigrams), '_', fixed=TRUE))))
 library(tidyr)
 bigramdf <- separate(bigramdf, bigrams, c("word1", "word2"), "_")
 
-tritest <- sampleNgm$trigrams[1:50000]
+tritest <- sampleNgm$trigrams[1:25000]
 trigramdf <- data.frame(trigrams = names(tritest), freq = as.numeric(tritest))
 trigramdf <- separate(trigramdf, trigrams, c("word1", "word2", "word3"), "_")
 
-quadtest <- sampleNgm$quadgrams[1:50000]
+quadtest <- sampleNgm$quadgrams[1:25000]
 quadgramdf <- data.frame(quadgrams = names(quadtest), freq = as.numeric(quadtest))
 quadgramdf <- separate(quadgramdf, quadgrams, c("word1", "word2", "word3", "word4"), "_")
 
-pred1 <- rep(NA, length(unigramdf$unigrams))
-pred2 <- rep(NA, length(unigramdf$unigrams))
-pred3 <- rep(NA, length(unigramdf$unigrams))
-pred4 <- rep(NA, length(unigramdf$unigrams))
-pred5 <- rep(NA, length(unigramdf$unigrams))
-pred1_prob <- rep(NA, length(unigramdf$unigrams))
-pred2_prob <- rep(NA, length(unigramdf$unigrams))
-pred3_prob <- rep(NA, length(unigramdf$unigrams))
-pred4_prob <- rep(NA, length(unigramdf$unigrams))
-pred5_prob <- rep(NA, length(unigramdf$unigrams))
-unigramProbs <- cbind(unigramdf, pred1, pred1_prob, 
-                      pred2, pred2_prob, 
-                      pred3, pred4_prob, 
-                      pred4, pred4_prob, 
-                      pred5, pred5_prob)
+ngramList <- list(unitest,bitest,tritest, quadtest)
+
 
 findNextWord <- function(df, x){
     nextWords <- df[df$word1 == x, 2:3]
@@ -90,6 +81,8 @@ for (i in seq_along(bigramdf$word1)) {
 
 bigram_next_words <- cbind(bigramdf, x)
 
+
+ptm <- proc.time()
 predTrigram <- function(df, x, y, z){
   nextWords <- df[df$word1 == x & df$word2 == y & df$word3 == z, 4:5]
   n <- length(nextWords[,1])
@@ -121,3 +114,48 @@ for (i in seq_along(trigramdf$word1)) {
 }
 
 trigram_next_words <- cbind(trigramdf, x)
+proc.time() - ptm
+
+#add ngram token at the end for search purpose
+bigram_next_words <- dplyr::mutate(bigram_next_words, bigram = paste(word1, word2, sep="_"))
+trigram_next_words <- dplyr::mutate(trigram_next_words, trigram = paste(word1, word2, word3, sep="_"))
+
+#subset with predicted next words only by removing NAs for first word
+unigramdf <- subset(unigramdf, !is.na(V1))
+bigram_next_words <- subset(bigram_next_words, !is.na(V1))
+trigram_next_words <- subset(trigram_next_words, !is.na(V1))
+
+
+saveRDS(trigram_next_words, "trigram_next_words.rds")
+saveRDS(bigram_next_words, "bigram_next_words.rds")
+saveRDS(unigramdf, "unigram_next_words.rds")
+
+##Grepl method
+#tritest2 <- data.frame(trigrams = names(tritest), freq = as.numeric(tritest))
+#quadtest2 <- data.frame(quadgrams = names(quadtest), freq = as.numeric(quadtest))
+# predTrigram <- function (trigram){
+#   trigram <- paste("^", trigram, "_", sep="")
+#   results <- quadtest2[grepl(trigram, quadtest2$quadgrams),]
+#   if (length(results$quadgrams) > 5){
+#     results <- results[1:5,]
+#   }
+#   return(results)
+# }
+# 
+# predBigram <- function (bigram){
+#   bigram <- paste("^", bigram, "_", sep="")
+#   results <- tritest2[grepl(bigram, tritest2$trigrams),]
+#   if (length(results$trigrams) > 5){
+#     results <- results[1:5,]
+#   }
+#   return(results)
+# }
+# 
+# predUnigram <- function (unigram){
+#   unigram <- paste("^", unigram, "_", sep="")
+#   results <- bitest2[grepl(unigram, biitest2$bigrams),]
+#   if (length(results$bigrams) > 5){
+#     results <- results[1:5,]
+#   }
+#   return(results)
+# }
